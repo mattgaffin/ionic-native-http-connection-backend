@@ -20,6 +20,7 @@ type HTTPRequestMethod =
     | 'post'
     | 'post'
     | 'put'
+    | 'options'
     | 'delete'
     | 'patch'
     | 'head';
@@ -43,13 +44,14 @@ export class NativeHttpConnectionD implements Connection {
             RequestMethod.Get,
             RequestMethod.Post,
             RequestMethod.Put,
+            RequestMethod.Options,
             RequestMethod.Delete,
             RequestMethod.Patch,
             RequestMethod.Head,
         ];
 
         if (allowedRequestMethods.indexOf(req.method) === -1) {
-            throw 'Only GET, POST, PUT, PATCH, DELETE and HEAD methods are supported by the current Native HTTP version';
+            throw 'Only GET, POST, PUT, OPTIONS, PATCH, DELETE and HEAD methods are supported by the current Native HTTP version';
         }
 
         this.request = req;
@@ -120,6 +122,9 @@ export class NativeHttpConnectionD implements Connection {
             case RequestMethod.Put:
                 return 'put';
 
+            case RequestMethod.Options:
+                return 'options';
+
             case RequestMethod.Delete:
                 return 'delete';
 
@@ -137,7 +142,8 @@ export class NativeHttpConnectionD implements Connection {
     private detectDataSerializerType(req: Request): DataSerializerType {
         if (
             req.method === RequestMethod.Post ||
-            req.method === RequestMethod.Put
+            req.method === RequestMethod.Put ||
+            req.method === RequestMethod.Options
         ) {
             // 1 stands for ContentType.JSON. Angular doesn't export ContentType
             if (req.detectContentTypeFromBody() === 1) {
