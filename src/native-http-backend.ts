@@ -19,6 +19,7 @@ type HTTPRequestMethod =
     | 'post'
     | 'post'
     | 'put'
+    | 'options'
     | 'delete'
     | 'patch'
     | 'head';
@@ -36,13 +37,14 @@ export class NativeHttpBackend implements HttpBackend {
             'GET',
             'POST',
             'PUT',
+            'OPTIONS',
             'DELETE',
             'PATCH',
             'HEAD',
         ];
 
         if (allowedRequestMethods.indexOf(req.method.toUpperCase()) === -1) {
-            throw 'Only GET, POST, PUT, DELETE, PATCH and HEAD methods are supported by the current Native HTTP version';
+            throw 'Only GET, POST, PUT, OPTIONS, DELETE, PATCH and HEAD methods are supported by the current Native HTTP version';
         }
 
         return new Observable((observer: Observer<HttpEvent<any>>) => {
@@ -165,7 +167,8 @@ export class NativeHttpBackend implements HttpBackend {
         if (
             req.method.toLowerCase() === 'post' ||
             req.method.toLowerCase() === 'put' ||
-            req.method.toLowerCase() === 'patch'
+            req.method.toLowerCase() === 'patch' ||
+            req.method.toLowerCase() === 'options'
         ) {
             // 1 stands for ContentType.JSON. Angular doesn't export ContentType
             if (typeof req.body !== 'string') {
